@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Baudson Gestion</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#3F8F8B"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Gestion">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--p:#3F8F8B;--pd:#2C6B68;--bg:#F7F6F2;--card:#fff;--t:#2B2F33;--t2:#6B7280;--b:#E5E3DC;--red:#C2574D;--ok:#5FA37A;--r:12px}
+[data-theme=bleu]{--p:#4A7FB0;--pd:#34597E}[data-theme=vert]{--p:#5E9A6B;--pd:#42704C}
+[data-theme=prune]{--p:#8A6A9A;--pd:#664C74}[data-theme=ardoise]{--p:#5D6B7A;--pd:#424E5A}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}body{font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--t)}
+#app{max-width:760px;margin:0 auto;height:100%;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:var(--card);border-bottom:1px solid var(--b)}
+.logo{width:42px;height:42px;border-radius:50%;background:var(--p);color:#fff;display:grid;place-items:center;font-weight:700;overflow:hidden;flex:none}
+.logo img{width:100%;height:100%;object-fit:cover}
+header h1{font-size:17px;line-height:1.2}header small{color:var(--t2);display:block;font-size:12.5px}
+.hd{flex:1;min-width:0}.hd *{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+main{flex:1;overflow-y:auto;padding:16px 16px 110px}
+nav{display:flex;background:var(--card);border-top:1px solid var(--b);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;padding:9px 2px 8px;font-size:12px;color:var(--t2);min-height:56px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button svg{width:22px;height:22px}nav button.on{color:var(--pd);font-weight:600}
+.card{background:var(--card);border:1px solid var(--b);border-radius:var(--r);padding:14px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card h3{font-size:14px;color:var(--t2);font-weight:600;margin-bottom:10px}
+.big{font-size:30px;font-weight:700;color:var(--pd)}.sm{font-size:13px;color:var(--t2)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:4px}
+.chip{flex:none;border:1px solid var(--b);background:var(--card);border-radius:20px;padding:8px 14px;font-size:14px;color:var(--t);min-height:40px}
+.chip.on{background:var(--p);border-color:var(--p);color:#fff}
+.row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--b)}.row:last-child{border:0}
+.row .g{flex:1;min-width:0}.row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.amt{font-weight:600;white-space:nowrap}.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.btn{border:0;background:var(--p);color:#fff;border-radius:10px;padding:12px 18px;font-size:16px;min-height:46px;font-weight:600}
+.btn:active{background:var(--pd)}.btn.ghost{background:none;color:var(--pd);border:1px solid var(--p)}
+.btn.red{background:var(--red)}.btn.full{width:100%}.icon{border:0;background:none;color:var(--t2);padding:8px;min-width:40px;min-height:40px;font-size:15px}
+input,select{width:100%;border:1px solid var(--b);border-radius:10px;padding:12px;font:inherit;background:#fff;color:var(--t);min-height:46px}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--p);outline-offset:1px}
+label{display:block;font-size:13.5px;color:var(--t2);margin:12px 0 5px}
+.fab{position:fixed;right:max(16px,calc(50% - 364px));bottom:calc(76px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;border:0;background:var(--p);color:#fff;font-size:32px;box-shadow:0 4px 14px rgba(0,0,0,.2);z-index:5}
+.ov{position:fixed;inset:0;background:rgba(30,35,40,.4);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:92%;overflow-y:auto;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom))}
+.sheet h2{font-size:19px;margin-bottom:4px}.acts{display:flex;gap:10px;margin-top:18px}.acts .btn{flex:1}
+.empty{text-align:center;color:var(--t2);padding:30px 10px}.tag{font-size:12px;color:var(--t2)}
+.bars{display:flex;align-items:flex-end;gap:3px;height:120px}.bars i{flex:1;background:var(--p);border-radius:4px 4px 0 0;min-height:2px;opacity:.85}
+.hb{margin:9px 0}.hb div{height:9px;background:var(--p);border-radius:5px;opacity:.85}.hb span{display:flex;justify-content:space-between;font-size:13.5px}
+.warn{background:#FBF1DC;border:1px solid #EBD9A8;border-radius:var(--r);padding:12px;margin-bottom:14px;font-size:14px}
+.sw{display:flex;gap:10px;flex-wrap:wrap}.sw button{width:38px;height:38px;border-radius:50%;border:3px solid transparent}.sw button.on{border-color:var(--t)}
+.wel{min-height:100%;padding:28px 20px}.wel h1{font-size:26px;margin:14px 0 6px}
+@media(prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.5}}}
+.bd{font-size:11.5px;border-radius:10px;padding:2px 8px;background:#E8EFEE;color:var(--pd);white-space:nowrap}.bd.w{background:#FBF1DC;color:#8a6a1c}.bd.r{background:#F6E3E0;color:var(--red)}
+.ln{display:grid;grid-template-columns:1fr 62px 92px 30px;gap:6px;align-items:center;margin:6px 0}.ln input{padding:8px;min-height:40px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.g2 b{font-size:16px}
+#pr{display:none}#pr table{width:100%;border-collapse:collapse;margin:14px 0}#pr th,#pr td{border-bottom:1px solid #ccc;padding:6px;text-align:left;font-size:14px}#pr .r{text-align:right}
+@media print{body>*:not(#pr){display:none!important}#pr{display:block;padding:20px;color:#000;font-size:14px}}
+</style></head><body>
+<div id="app"></div>
+<script>
+'use strict';
+const $=s=>document.querySelector(s), E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const METHODS=['Espèce','Wave','Orange','MTN','Moov','Chèque'];
+const PAL=['#7FB3AE','#D9B98B','#8FA9C4','#D49A8A','#B5A6C9','#A9C29A','#C9C28A','#9AAAB5'];
+const THEMES={teal:'#3F8F8B',bleu:'#4A7FB0',vert:'#5E9A6B',prune:'#8A6A9A',ardoise:'#5D6B7A'};
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
+const fmt=n=>Math.round(n).toLocaleString('fr-FR').replace(/\u202f/g,' ')+' FCFA';
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const pd=s=>{const[a,b,c]=s.split('-');return new Date(a,b-1,c)};
+const fd=s=>pd(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});
+// ---------- IndexedDB ----------
+let db;const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open('baudson-gestion',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const kget=k=>new Promise(r=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()});
+const kput=(k,v)=>new Promise((r,j)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=r;t.onerror=()=>j(t.error)});
+let S,tab='dash',per='month',cf='',ct='',q='',step=0,draft={},locked=false,tries=0,until=0,dip=null,dipHide=false;
+const blank=()=>({profile:null,articles:[],clients:[],fournisseurs:[],ventes:[],achats:[],paiements:[],mouvements:[],seq:{d:0,v:0,a:0},theme:'teal',lastBackup:null,unsaved:0,pin:null});
+const save=async()=>{await kput('data',S)};
+const change=async()=>{S.unsaved=(S.unsaved||0)+1;await save();render()};
+// ---------- Données dérivées ----------
+const nz=s=>(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+const num=v=>Math.round(+v||0),pad=n=>String(n).padStart(4,'0'),yr=()=>new Date().getFullYear(),today=()=>iso(new Date());
+const tot=l=>l.reduce((a,x)=>a+num(x.q)*num(x.pu),0),vt=v=>Math.max(0,tot(v.lignes)-num(v.remise)),at=a=>tot(a.lignes);
+const paid=(t,id)=>S.paiements.filter(p=>p.t===t&&p.d===id).reduce((a,p)=>a+p.m,0);
+const rv=v=>vt(v)-paid('v',v.id),ra=a=>at(a)-paid('a',a.id);
+const stock=id=>S.mouvements.filter(m=>m.a===id).reduce((a,m)=>a+m.q,0);
+const art=id=>S.articles.find(a=>a.id===id),cli=id=>S.clients.find(c=>c.id===id),fou=id=>S.fournisseurs.find(f=>f.id===id);
+const cn=v=>v.client&&cli(v.client)?(cli(v.client).name||cli(v.client).tel||'Client sans nom'):(v.cname||'Client de passage');
+const VST={brouillon:['Devis','w'],validee:['Validée',''],livree:['Livrée',''],annulee:['Annulée','r']},AST={commandee:['Commandée','w'],partielle:['Part. reçue','w'],recue:['Reçue',''],annulee:['Annulée','r']};
+const bd=(s,m)=>`<span class="bd ${m[s][1]}">${m[s][0]}</span>`;
+const row=(a,b,c,o,d='')=>`<div class="row" onclick="${o}"><div class="g"><b>${a}</b><span class="tag">${b}</span></div><div style="text-align:right">${c}${d}</div></div>`;
+const initials=n=>(n||'BG').split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const opts=`${METHODS.map(m=>`<option>${m}</option>`).join('')}`;
+// ---------- Rendu ----------
+const ICON={dash:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke-width="2" stroke-linecap="round"/>',ventes:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6" stroke-width="2" stroke-linejoin="round"/>',achats:'<path d="M3 7h12v10H3zM15 10h4l2 3v4h-6" stroke-width="2" stroke-linejoin="round"/>',stock:'<path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10" stroke-width="2" stroke-linejoin="round"/>',plus:'<path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="4" stroke-linecap="round"/>'};
+function render(){document.documentElement.dataset.theme=S.theme||'teal';
+ if(!S.profile){$('#app').innerHTML=welcome();return}
+ if(S.pin&&locked){close();$('#app').innerHTML=lockScreen();$('#lk').focus();return}
+ const p=S.profile,V={dash,ventes:vList,achats:aList,stock:sList,plus:more,cli:()=>eList('clients'),fou:()=>eList('fournisseurs')},on=t=>t===tab||(t==='plus'&&(tab==='cli'||tab==='fou'));
+ $('#app').innerHTML=`<header><div class="logo">${p.logo?`<img src="${p.logo}" alt="">`:E(initials(p.name))}</div><div class="hd"><h1>${E(p.name)}</h1>${p.slogan?`<small>${E(p.slogan)}</small>`:''}</div>
+ <button class="icon" onclick="settings()" aria-label="Paramètres"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3" stroke-width="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke-width="2" stroke-linecap="round"/></svg></button></header>
+ <main>${V[tab]()}</main><button class="fab" onclick="fab()" aria-label="Ajouter">+</button>
+ <nav>${[['dash','Tableau'],['ventes','Ventes'],['achats','Achats'],['stock','Stock'],['plus','Plus']].map(([k,l])=>`<button class="${on(k)?'on':''}" onclick="tab='${k}';q='';cf='';render()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">${ICON[k]}</svg>${l}</button>`).join('')}</nav>`}
+const fab=()=>({dash:vForm,ventes:vForm,plus:vForm,achats:aForm,stock:artForm,cli:()=>entForm('clients'),fou:()=>entForm('fournisseurs')}[tab])();
+function backupWarn(){const d=S.lastBackup?Math.floor((Date.now()-S.lastBackup)/864e5):null;if((S.ventes.length||S.articles.length)&&(d===null||d>=7))return`<div class="warn">${d===null?'Vous n’avez encore jamais sauvegardé vos données.':'Dernière sauvegarde il y a '+d+' jours.'} <a href="#" onclick="settings();return false" style="color:var(--pd)">Sauvegarder maintenant</a></div>`;return''}
+function dash(){const t=new Date(),y=t.getFullYear(),m=t.getMonth(),r=per==='all'?['0000','9999']:per==='year'?[y+'-01-01',y+'-12-31']:[iso(new Date(y,m,1)),iso(new Date(y,m+1,0))],ok=d=>d>=r[0]&&d<=r[1],live=v=>v.statut==='validee'||v.statut==='livree';
+ const ca=S.ventes.filter(v=>live(v)&&ok(v.date)).reduce((a,v)=>a+vt(v),0),enc=S.paiements.filter(p=>p.t==='v'&&ok(p.date)).reduce((a,p)=>a+p.m,0),dep=S.paiements.filter(p=>p.t==='a'&&ok(p.date)).reduce((a,p)=>a+p.m,0),
+ cre=S.ventes.filter(live).reduce((a,v)=>a+rv(v),0),det=S.achats.filter(a=>a.statut!=='annulee').reduce((s,a)=>s+ra(a),0),sv=S.articles.reduce((a,x)=>a+Math.max(0,stock(x.id))*num(x.pa),0),low=S.articles.filter(x=>x.seuil>0&&stock(x.id)<=x.seuil),mx=Math.max(1,enc,dep);
+ const tile=(h,v,c='')=>`<div class="card" style="margin:0"><h3>${h}</h3><b style="${c}">${fmt(v)}</b></div>`;
+ return`<div class="chips">${[['month','Ce mois'],['year','Cette année'],['all','Tout']].map(([k,l])=>`<button class="chip ${per===k?'on':''}" onclick="per='${k}';render()">${l}</button>`).join('')}</div>${installBar()}${backupWarn()}
+ <div class="card"><h3>Chiffre d’affaires (ventes validées)</h3><div class="big">${fmt(ca)}</div></div>
+ <div class="g2">${tile('Encaissé',enc)}${tile('Payé aux fournisseurs',dep)}${tile('Trésorerie nette',enc-dep,enc-dep<0?'color:var(--red)':'color:var(--pd)')}${tile('Valeur du stock',sv)}${tile('Les clients nous doivent',cre)}${tile('Nous devons',det)}</div>
+ <div class="card" style="margin-top:14px"><h3>Recettes et dépenses</h3><div class="hb"><span><b style="font-weight:500">Encaissé</b><span>${fmt(enc)}</span></div><div class="hb"><div style="width:${enc/mx*100}%"></div></div><div class="hb"><span><b style="font-weight:500">Payé aux fournisseurs</b><span>${fmt(dep)}</span></span><div style="width:${dep/mx*100}%;background:var(--red)"></div></div></div>
+ <div class="card"><h3>Stock bas</h3>${low.length?low.map(a=>`<div class="row"><span class="g">${E(a.name)}</span><span class="amt" style="color:var(--red)">${stock(a.id)} ${E(a.unit)}</span></div>`).join(''):'<div class="sm">Aucun article sous son seuil.</div>'}</div>`}
+function vList(){const L=[...S.ventes].filter(v=>!cf||v.statut===cf).sort((a,b)=>b.date.localeCompare(a.date)||b.at-a.at);
+ return`<div class="chips">${[['','Toutes'],['brouillon','Devis'],['validee','Validées'],['livree','Livrées']].map(([k,l])=>`<button class="chip ${cf===k?'on':''}" onclick="cf='${k}';render()">${l}</button>`).join('')}</div><div class="card" style="padding:4px 14px">${L.length?L.map(v=>row(E(cn(v)),`${v.num||v.dnum} · ${fd(v.date)}`,`<span class="amt">${fmt(vt(v))}</span>`,`vView('${v.id}')`,`<div>${bd(v.statut,VST)}${(v.statut==='validee'||v.statut==='livree')&&rv(v)>0?` <span class="tag">reste ${fmt(rv(v))}</span>`:''}</div>`)).join(''):'<div class="empty">Aucune vente. Appuyez sur + pour créer un devis.</div>'}</div>`}
+function aList(){const L=[...S.achats].sort((a,b)=>b.date.localeCompare(a.date)||b.at-a.at);
+ return`<div class="card" style="padding:4px 14px">${L.length?L.map(a=>row(E(fou(a.four)?.name||'—'),`${a.num} · ${fd(a.date)}`,`<span class="amt">${fmt(at(a))}</span>`,`aView('${a.id}')`,`<div>${bd(a.statut,AST)}${a.statut!=='annulee'&&ra(a)>0?` <span class="tag">reste ${fmt(ra(a))}</span>`:''}</div>`)).join(''):'<div class="empty">Aucune commande fournisseur. Appuyez sur + pour en créer une.</div>'}</div>`}
+function sList(){const k=nz(q),L=S.articles.filter(a=>!k||nz(a.name+' '+a.cat+' '+a.ref).includes(k)).sort((a,b)=>a.name.localeCompare(b.name));
+ return`<input type="search" placeholder="Rechercher un article…" value="${E(q)}" oninput="q=this.value;const p=this.selectionStart;render();const i=$('main input');i.focus();i.setSelectionRange(p,p)" style="margin-bottom:12px"><div class="card" style="padding:4px 14px">${L.length?L.map(a=>{const s=stock(a.id);return row(E(a.name),E([a.cat,fmt(a.pv)].filter(Boolean).join(' · ')),`<span class="amt" style="color:${a.seuil>0&&s<=a.seuil?'var(--red)':'inherit'}">${s} ${E(a.unit)}</span>`,`artForm('${a.id}')`)}).join(''):'<div class="empty">Aucun article. Appuyez sur + pour en ajouter.</div>'}</div>`}
+const more=()=>`<button class="btn full" style="margin-bottom:12px" onclick="tab='cli';render()">Clients (${S.clients.length})</button><button class="btn full" onclick="tab='fou';render()">Fournisseurs (${S.fournisseurs.length})</button>`;
+const due=(k,id)=>{const d=k==='clients'?S.ventes.filter(v=>v.client===id&&(v.statut==='validee'||v.statut==='livree')).reduce((s,v)=>s+rv(v),0):S.achats.filter(a=>a.four===id&&a.statut!=='annulee').reduce((s,a)=>s+ra(a),0);return d>0?fmt(d)+' dû':''};
+function eList(k){const L=[...S[k]].sort((a,b)=>(a.name||a.tel||'~').localeCompare(b.name||b.tel||'~'));
+ return`<button class="chip" onclick="tab='plus';render()" style="margin-bottom:10px">← Retour</button><div class="card" style="padding:4px 14px">${L.length?L.map(e=>row(E(e.name||e.tel||'Sans nom'),E([e.tel,e.email].filter(Boolean).join(' · ')||'—'),`<span class="tag">${due(k,e.id)}</span>`,`entForm('${k}','${e.id}')`)).join(''):'<div class="empty">Aucun enregistrement. Appuyez sur +.</div>'}</div>`}
+// ---------- Fenêtres ----------
+function sheet(h){close();const d=document.createElement('div');d.className='ov';d.id='ov';d.innerHTML=`<div class="sheet" role="dialog">${h}</div>`;d.onclick=e=>{if(e.target===d)close()};document.body.appendChild(d)}
+function close(){$('#ov')?.remove()}
+const val=id=>$('#'+id).value.trim(),keep=f=>{const s=$('.sheet')?.scrollTop||0;f();const e=$('.sheet');if(e)e.scrollTop=s};
+const dr=(a,b)=>`<div style="display:flex;gap:10px"><div style="flex:1">${a}</div><div style="flex:1">${b}</div></div>`;
+// Articles
+function artForm(id){const a=art(id)||{name:'',ref:'',cat:'',pa:'',pv:'',unit:'pièce',seuil:''},c=[...new Set(S.articles.map(x=>x.cat).filter(Boolean))];
+ const mv=id?S.mouvements.filter(m=>m.a===id).slice(-6).reverse():[];
+ sheet(`<h2>${id?'Modifier l’article':'Nouvel article'}</h2><label>Nom *</label><input id="a-n" value="${E(a.name)}"><label>Référence</label><input id="a-r" value="${E(a.ref)}"><label>Catégorie</label><input id="a-c" list="dc" value="${E(a.cat)}"><datalist id="dc">${c.map(x=>`<option>${E(x)}</option>`).join('')}</datalist>
+ ${dr(`<label>Prix d’achat</label><input id="a-pa" type="number" inputmode="numeric" value="${a.pa}">`,`<label>Prix de vente</label><input id="a-pv" type="number" inputmode="numeric" value="${a.pv}">`)}
+ ${dr(`<label>Unité</label><input id="a-u" value="${E(a.unit)}">`,`<label>Seuil d’alerte</label><input id="a-s" type="number" inputmode="numeric" value="${a.seuil}">`)}
+ <label>${id?'Stock compté (inventaire), actuel : '+stock(id):'Stock initial'}</label><input id="a-st" type="number" inputmode="numeric" placeholder="${id?'laisser vide si inchangé':'0'}">
+ ${mv.length?`<h3 style="margin:16px 0 4px;font-size:14px;color:var(--t2)">Derniers mouvements</h3>${mv.map(m=>`<div class="row" style="padding:6px 0"><span class="g sm">${fd(m.date)} · ${E(m.note)} ${E(m.ref||'')}</span><b>${m.q>0?'+':''}${m.q}</b></div>`).join('')}`:''}
+ <div class="acts">${id?`<button class="btn red" style="flex:none" onclick="delArt('${id}')">Supprimer</button>`:''}<button class="btn ghost" onclick="close()">Annuler</button><button class="btn" onclick="saveArt('${id||''}')">Enregistrer</button></div>`)}
+async function saveArt(id){const n=val('a-n');if(!n){alert('Le nom est obligatoire.');return}
+ const o={name:n,ref:val('a-r'),cat:val('a-c'),pa:num($('#a-pa').value),pv:num($('#a-pv').value),unit:val('a-u')||'pièce',seuil:num($('#a-s').value)};let a=art(id);
+ if(a)Object.assign(a,o);else{a={id:uid(),...o};S.articles.push(a)}
+ const sv=$('#a-st').value;if(sv!==''){const d=num(sv)-(id?stock(id):0);if(d)S.mouvements.push({id:uid(),a:a.id,q:d,date:today(),ref:'',note:id?'Inventaire':'Stock initial'})}
+ close();await change()}
+async function delArt(id){if(S.mouvements.some(m=>m.a===id)||S.ventes.concat(S.achats).some(d=>d.lignes.some(l=>l.art===id))){alert('Cet article a un historique : suppression impossible.');return}if(!confirm('Supprimer cet article ?'))return;S.articles=S.articles.filter(x=>x.id!==id);close();await change()}
+// Clients / fournisseurs
+function entForm(k,id){const e=S[k].find(x=>x.id===id)||{},C=k==='clients',tl=id?(C?S.ventes.filter(v=>v.client===id&&(v.statut==='validee'||v.statut==='livree')).reduce((s,v)=>s+vt(v),0):S.achats.filter(a=>a.four===id&&a.statut!=='annulee').reduce((s,a)=>s+at(a),0)):0;
+ sheet(`<h2>${id?'Modifier':'Nouveau'} ${C?'client':'fournisseur'}</h2><label>Nom${C?' (facultatif)':' *'}</label><input id="e-n" value="${E(e.name)}"><label>Téléphone</label><input id="e-t" type="tel" value="${E(e.tel)}"><label>E-mail</label><input id="e-e" type="email" value="${E(e.email)}"><label>Adresse</label><input id="e-a" value="${E(e.adr)}"><label>Notes</label><input id="e-o" value="${E(e.notes)}">
+ ${id?`<div class="card" style="margin-top:14px"><div class="sm">${C?'Total acheté':'Total commandé'} : <b>${fmt(tl)}</b></div><div class="sm">Reste dû : <b>${due(k,id)||'0 FCFA'}</b></div></div>`:''}
+ <div class="acts">${id?`<button class="btn red" style="flex:none" onclick="delEnt('${k}','${id}')">Supprimer</button>`:''}<button class="btn ghost" onclick="close()">Annuler</button><button class="btn" onclick="saveEnt('${k}','${id||''}')">Enregistrer</button></div>`)}
+async function saveEnt(k,id){const o={name:val('e-n'),tel:val('e-t'),email:val('e-e'),adr:val('e-a'),notes:val('e-o')};
+ if(k==='fournisseurs'&&!o.name){alert('Le nom est obligatoire.');return}if(!Object.values(o).some(Boolean)){alert('Renseignez au moins un champ.');return}
+ const e=S[k].find(x=>x.id===id);if(e)Object.assign(e,o);else S[k].push({id:uid(),...o});close();await change()}
+async function delEnt(k,id){if(S.ventes.some(v=>v.client===id)||S.achats.some(a=>a.four===id)){alert('Utilisé dans des documents : suppression impossible.');return}if(!confirm('Supprimer ?'))return;S[k]=S[k].filter(x=>x.id!==id);close();await change()}
+// Lignes de document
+const lnHtml=(X,n,r,d)=>X.lignes.length?`<div class="ln sm"><span></span><span>Qté</span><span>Prix</span><span></span></div>`+X.lignes.map((l,i)=>`<div class="ln"><span style="font-size:14px">${E(l.label)}</span><input id="l-q${i}" type="number" inputmode="numeric" value="${l.q}" onchange="${r}();${d}()"><input id="l-p${i}" type="number" inputmode="numeric" value="${l.pu}" onchange="${r}();${d}()"><button class="icon" onclick="${r}();${n}.lignes.splice(${i},1);${d}()">✕</button></div>`).join(''):'';
+const rdL=X=>X.lignes.forEach((l,i)=>{l.q=num($('#l-q'+i).value);l.pu=num($('#l-p'+i).value)});
+// Vente / devis
+let D=null,A=null;
+function vForm(id){const v=S.ventes.find(x=>x.id===id);D=v?JSON.parse(JSON.stringify(v)):{id:null,date:today(),cname:'',client:null,lignes:[],remise:0,statut:'brouillon'};drawV()}
+function rd(){if(!$('#v-d'))return;D.date=$('#v-d').value;D.cname=$('#v-c').value.trim();D.remise=num($('#v-r').value);rdL(D)}
+function drawV(){keep(()=>sheet(`<h2>${D.id?'Modifier le devis':'Nouvelle vente (devis)'}</h2><label>Date</label><input id="v-d" type="date" value="${D.date}"><label>Client (facultatif)</label><input id="v-c" list="cl" value="${E(D.cname)}" placeholder="Client de passage"><datalist id="cl">${S.clients.filter(c=>c.name).map(c=>`<option>${E(c.name)}</option>`).join('')}</datalist>
+ <label>Articles</label>${lnHtml(D,'D','rd','drawV')}<select style="margin-top:6px" onchange="addL(this.value)"><option value="">+ Ajouter un article…</option>${S.articles.map(a=>`<option value="${a.id}">${E(a.name)} (stock ${stock(a.id)})</option>`).join('')}<option value="_">Ligne libre…</option></select>
+ <label>Remise globale (FCFA)</label><input id="v-r" type="number" inputmode="numeric" value="${D.remise||''}" onchange="rd();drawV()"><div class="card" style="margin-top:14px"><div class="sm">Total</div><div class="big">${fmt(vt(D))}</div></div>
+ <div class="acts"><button class="btn ghost" onclick="close()">Fermer</button><button class="btn ghost" onclick="rd();printDoc(D)">Imprimer</button></div><div class="acts"><button class="btn" onclick="vSave()">Enregistrer le devis</button></div>`))}
+function addL(v){rd();if(!v)return;if(v==='_'){const t=prompt('Désignation ?');if(!t)return;D.lignes.push({art:null,label:t.trim(),q:1,pu:0})}else{const a=art(v);D.lignes.push({art:a.id,label:a.name,q:1,pu:num(a.pv)})}drawV()}
+async function vSave(){rd();if(!D.lignes.length||D.lignes.some(l=>l.q<=0)){alert('Ajoutez au moins un article, avec une quantité supérieure à 0.');return}
+ if(D.id)Object.assign(S.ventes.find(x=>x.id===D.id),D);else{D.id=uid();D.at=Date.now();D.dnum='DEV-'+yr()+'-'+pad(++S.seq.d);S.ventes.push(D)}await change();vView(D.id)}
+const pRow=p=>`<div class="row"><div class="g">${fmt(p.m)}<span class="tag"> ${p.mode} · ${fd(p.date)}${p.note?' · '+E(p.note):''}</span></div></div>`;
+function vView(id){const v=S.ventes.find(x=>x.id===id),t=vt(v),pp=paid('v',id),br=v.statut==='brouillon',an=v.statut==='annulee',P=S.paiements.filter(p=>p.t==='v'&&p.d===id);
+ sheet(`<h2>${E(cn(v))}</h2><div class="sm">${E(v.num||v.dnum)} · ${fd(v.date)} · ${bd(v.statut,VST)}</div>
+ <div class="card" style="margin-top:12px;padding:4px 14px">${v.lignes.map(l=>`<div class="row"><div class="g">${E(l.label)}<span class="tag"> ${l.q} × ${fmt(l.pu)}</span></div><span class="amt">${fmt(l.q*l.pu)}</span></div>`).join('')}${v.remise?`<div class="row"><div class="g">Remise</div><span class="amt">− ${fmt(v.remise)}</span></div>`:''}</div>
+ <div class="card"><div class="sm">Total</div><div class="big">${fmt(t)}</div>${br?'':`<div class="sm">Payé ${fmt(pp)} · <b>Reste ${fmt(t-pp)}</b></div>`}</div>${P.length?`<div class="card" style="padding:4px 14px">${P.map(pRow).join('')}</div>`:''}
+ <button class="btn ghost full" onclick="printDoc(S.ventes.find(x=>x.id==='${id}'))">Imprimer / Enregistrer en PDF</button>
+ ${br?`<button class="btn ghost full" style="margin-top:10px" onclick="vForm('${id}')">Modifier le devis</button><div class="acts"><button class="btn" onclick="vConfirm('${id}',false)">Valider</button><button class="btn" onclick="vConfirm('${id}',true)">Valider et livrer</button></div><button class="btn red full" style="margin-top:10px" onclick="vDel('${id}')">Supprimer le devis</button>`:''}
+ ${v.statut==='validee'?`<button class="btn full" style="margin-top:10px" onclick="vLivrer('${id}')">Livrer</button>`:''}${!br&&!an&&t-pp>0?`<button class="btn full" style="margin-top:10px" onclick="payForm('v','${id}')">Ajouter un paiement</button>`:''}${!br&&!an?`<button class="btn red full" style="margin-top:10px" onclick="vAnnul('${id}')">Annuler la vente</button>`:''}
+ <button class="btn ghost full" style="margin-top:10px" onclick="close()">Fermer</button>`)}
+function vConfirm(id,l){const v=S.ventes.find(x=>x.id===id);sheet(`<h2>${l?'Valider et livrer':'Valider la vente'}</h2><p class="sm">Total : ${fmt(vt(v))}. Indiquez ce que le client paie maintenant (0 si rien).</p><label>Montant payé maintenant (FCFA)</label><input id="p-m" type="number" inputmode="numeric" value="${vt(v)}"><label>Moyen de règlement</label><select id="p-k">${opts}</select><div class="acts"><button class="btn ghost" onclick="vView('${id}')">Retour</button><button class="btn" onclick="vDo('${id}',${l})">Confirmer</button></div>`)}
+const lowStock=v=>v.lignes.filter(l=>l.art&&stock(l.art)<l.q).map(l=>l.label);
+const deliver=v=>{v.lignes.filter(l=>l.art).forEach(l=>S.mouvements.push({id:uid(),a:l.art,q:-l.q,date:today(),ref:v.num,note:'Livraison'}));v.statut='livree'};
+async function vDo(id,liv){const v=S.ventes.find(x=>x.id===id),m=num($('#p-m').value),k=$('#p-k').value;
+ if(liv){const w=lowStock(v);if(w.length&&!confirm('Stock insuffisant pour : '+w.join(', ')+'. Continuer ?'))return}
+ if(!v.client&&v.cname){const n=nz(v.cname);let c=S.clients.find(x=>nz(x.name)===n);if(!c){c={id:uid(),name:v.cname,tel:'',email:'',adr:'',notes:''};S.clients.push(c)}v.client=c.id}
+ v.statut='validee';v.num='VTE-'+yr()+'-'+pad(++S.seq.v);if(liv)deliver(v);if(m>0)S.paiements.push({id:uid(),t:'v',d:id,date:today(),m,mode:k,note:''});await change();vView(id)}
+async function vLivrer(id){const v=S.ventes.find(x=>x.id===id),w=lowStock(v);if(w.length&&!confirm('Stock insuffisant pour : '+w.join(', ')+'. Continuer ?'))return;deliver(v);await change();vView(id)}
+async function vAnnul(id){if(!confirm('Annuler cette vente ? Le stock et les paiements seront remis en état.'))return;const v=S.ventes.find(x=>x.id===id);
+ if(v.statut==='livree')v.lignes.filter(l=>l.art).forEach(l=>S.mouvements.push({id:uid(),a:l.art,q:l.q,date:today(),ref:v.num,note:'Annulation vente'}));
+ const pp=paid('v',id);if(pp)S.paiements.push({id:uid(),t:'v',d:id,date:today(),m:-pp,mode:'—',note:'Annulation'});v.statut='annulee';await change();vView(id)}
+async function vDel(id){if(!confirm('Supprimer ce devis ?'))return;S.ventes=S.ventes.filter(x=>x.id!==id);close();await change()}
+// Paiements
+function payForm(t,id){const d=(t==='v'?S.ventes:S.achats).find(x=>x.id===id),r=t==='v'?rv(d):ra(d),b=t==='v'?'vView':'aView';
+ sheet(`<h2>Ajouter un paiement</h2><p class="sm">Reste à payer : ${fmt(r)}</p><label>Date</label><input id="p-d" type="date" value="${today()}"><label>Montant (FCFA)</label><input id="p-m" type="number" inputmode="numeric" value="${r}"><label>Moyen de règlement</label><select id="p-k">${opts}</select><label>Note</label><input id="p-o"><div class="acts"><button class="btn ghost" onclick="${b}('${id}')">Retour</button><button class="btn" onclick="paySave('${t}','${id}')">Enregistrer</button></div>`)}
+async function paySave(t,id){const d=(t==='v'?S.ventes:S.achats).find(x=>x.id===id),r=t==='v'?rv(d):ra(d),m=num($('#p-m').value);
+ if(m<=0){alert('Indiquez un montant supérieur à 0.');return}if(m>r&&!confirm('Le montant dépasse le reste à payer. Continuer ?'))return;
+ S.paiements.push({id:uid(),t,d:id,date:$('#p-d').value||today(),m,mode:$('#p-k').value,note:val('p-o')});await change();t==='v'?vView(id):aView(id)}
+// Commandes fournisseurs
+function aForm(){if(!S.fournisseurs.length){alert('Ajoutez d’abord un fournisseur (onglet Plus).');return}A={date:today(),four:'',lignes:[],ac:'',mode:'Espèce'};drawA()}
+function ra2(){if(!$('#o-d'))return;A.date=$('#o-d').value;A.four=$('#o-f').value;A.ac=$('#o-a').value;A.mode=$('#o-k').value;rdL(A)}
+function drawA(){keep(()=>sheet(`<h2>Nouvelle commande fournisseur</h2><label>Date</label><input id="o-d" type="date" value="${A.date}"><label>Fournisseur *</label><select id="o-f"><option value="">— Choisir —</option>${S.fournisseurs.map(f=>`<option value="${f.id}" ${f.id===A.four?'selected':''}>${E(f.name)}</option>`).join('')}</select>
+ <label>Articles commandés</label>${lnHtml(A,'A','ra2','drawA')}<select style="margin-top:6px" onchange="addA(this.value)"><option value="">+ Ajouter un article…</option>${S.articles.map(a=>`<option value="${a.id}">${E(a.name)}</option>`).join('')}</select>
+ <div class="card" style="margin-top:14px"><div class="sm">Total</div><div class="big">${fmt(at(A))}</div></div>${dr(`<label>Acompte versé</label><input id="o-a" type="number" inputmode="numeric" value="${A.ac}">`,`<label>Moyen</label><select id="o-k">${METHODS.map(m=>`<option ${m===A.mode?'selected':''}>${m}</option>`).join('')}</select>`)}
+ <div class="acts"><button class="btn ghost" onclick="close()">Annuler</button><button class="btn" onclick="aSave()">Enregistrer la commande</button></div>`))}
+function addA(v){ra2();if(!v)return;const a=art(v);A.lignes.push({art:a.id,label:a.name,q:1,pu:num(a.pa),recu:0});drawA()}
+async function aSave(){ra2();if(!A.four||!A.lignes.length||A.lignes.some(l=>l.q<=0)){alert('Choisissez un fournisseur et ajoutez au moins un article (quantité supérieure à 0).');return}
+ A.id=uid();A.at=Date.now();A.num='ACH-'+yr()+'-'+pad(++S.seq.a);A.statut='commandee';const ac=num(A.ac),k=A.mode;delete A.ac;delete A.mode;S.achats.push(A);
+ if(ac>0)S.paiements.push({id:uid(),t:'a',d:A.id,date:A.date,m:ac,mode:k,note:'Acompte'});const id=A.id;await change();aView(id)}
+function aView(id){const a=S.achats.find(x=>x.id===id),t=at(a),pp=paid('a',id),an=a.statut==='annulee',P=S.paiements.filter(p=>p.t==='a'&&p.d===id);
+ sheet(`<h2>${E(fou(a.four)?.name||'—')}</h2><div class="sm">${a.num} · ${fd(a.date)} · ${bd(a.statut,AST)}</div>
+ <div class="card" style="margin-top:12px;padding:4px 14px">${a.lignes.map(l=>`<div class="row"><div class="g">${E(l.label)}<span class="tag"> commandé ${l.q} · reçu ${l.recu} · ${fmt(l.pu)}</span></div><span class="amt">${fmt(l.q*l.pu)}</span></div>`).join('')}</div>
+ <div class="card"><div class="sm">Total</div><div class="big">${fmt(t)}</div><div class="sm">Payé ${fmt(pp)} · <b>Reste ${fmt(t-pp)}</b></div></div>${P.length?`<div class="card" style="padding:4px 14px">${P.map(pRow).join('')}</div>`:''}
+ ${an?'':`<button class="btn full" onclick="rcvForm('${id}')">Réceptionner / corriger la réception</button>${t-pp>0?`<button class="btn full" style="margin-top:10px" onclick="payForm('a','${id}')">Ajouter un paiement</button>`:''}${a.lignes.every(l=>!l.recu)?`<button class="btn red full" style="margin-top:10px" onclick="aAnnul('${id}')">Annuler la commande</button>`:''}`}
+ <button class="btn ghost full" style="margin-top:10px" onclick="close()">Fermer</button>`)}
+function rcvForm(id){const a=S.achats.find(x=>x.id===id);sheet(`<h2>Réception</h2><p class="sm">Quantité reçue maintenant (négative pour corriger une réception) et prix d’achat réel.</p><div class="ln sm"><span></span><span>Reçu</span><span>Prix</span><span></span></div>${a.lignes.map((l,i)=>`<div class="ln"><span style="font-size:14px">${E(l.label)}<br><span class="tag">commandé ${l.q} · déjà reçu ${l.recu}</span></span><input id="r-q${i}" type="number" inputmode="numeric" value="${Math.max(0,l.q-l.recu)}"><input id="r-p${i}" type="number" inputmode="numeric" value="${l.pu}"><span></span></div>`).join('')}<div class="acts"><button class="btn ghost" onclick="aView('${id}')">Retour</button><button class="btn" onclick="rcvDo('${id}')">Valider la réception</button></div>`)}
+async function rcvDo(id){const a=S.achats.find(x=>x.id===id);if(a.lignes.some((l,i)=>l.recu+num($('#r-q'+i).value)<0)){alert('Le total reçu d’un article ne peut pas être négatif.');return}
+ a.lignes.forEach((l,i)=>{const d=num($('#r-q'+i).value),p=num($('#r-p'+i).value);l.pu=p;if(d){S.mouvements.push({id:uid(),a:l.art,q:d,date:today(),ref:a.num,note:d>0?'Réception':'Correction réception'});l.recu+=d}const x=art(l.art);if(x&&p)x.pa=p});
+ const rc=a.lignes.reduce((s,l)=>s+l.recu,0);a.statut=a.lignes.every(l=>l.recu>=l.q)?'recue':rc>0?'partielle':'commandee';await change();aView(id)}
+async function aAnnul(id){if(!confirm('Annuler cette commande ?'))return;const a=S.achats.find(x=>x.id===id),pp=paid('a',id);if(pp)S.paiements.push({id:uid(),t:'a',d:id,date:today(),m:-pp,mode:'—',note:'Annulation'});a.statut='annulee';await change();aView(id)}
+// Impression / PDF
+function docHtml(v){const p=S.profile,br=v.statut==='brouillon',t=vt(v),pp=v.id&&!br?paid('v',v.id):0;
+ return`<div style="display:flex;gap:14px;align-items:center">${p.logo?`<img src="${p.logo}" style="width:70px;height:70px;object-fit:contain">`:''}<div><b style="font-size:20px">${E(p.name)}</b><br>${E(p.slogan)}<br>${E([p.phone,p.email,p.address].filter(Boolean).join(' · '))}</div></div>
+ <h2 style="margin-top:18px">${br?'DEVIS':'REÇU DE VENTE'} ${E(br?v.dnum||'':v.num)}</h2><div>Date : ${fd(v.date)}<br>Client : ${E(cn(v))}</div>
+ <table><tr><th>Désignation</th><th class="r">Qté</th><th class="r">Prix</th><th class="r">Total</th></tr>${v.lignes.map(l=>`<tr><td>${E(l.label)}</td><td class="r">${l.q}</td><td class="r">${fmt(l.pu)}</td><td class="r">${fmt(l.q*l.pu)}</td></tr>`).join('')}</table>
+ <p class="r">${v.remise?`Remise : − ${fmt(v.remise)}<br>`:''}<b style="font-size:17px">Total : ${fmt(t)}</b>${br?'':`<br>Payé : ${fmt(pp)}<br>Reste à payer : ${fmt(t-pp)}`}</p>${br?'<p style="font-size:12px">Devis valable 30 jours. Document non contractuel tant qu’il n’est pas validé.</p>':''}`}
+function printDoc(v){let d=$('#pr');if(!d){d=document.createElement('div');d.id='pr';document.body.appendChild(d)}d.innerHTML=docHtml(v);setTimeout(()=>print(),60)}
+// ---------- Accueil ----------
+function welcome(){
+ if(step===2)return pinStep();
+ if(step===0)return`<div class="wel"><div class="logo" style="width:64px;height:64px;font-size:22px">BE</div><h1>Bienvenue sur Baudson Gestion</h1><p class="sm" style="font-size:16px">Gérez vos ventes, votre stock et vos clients simplement. Vos données restent uniquement sur cet appareil : pensez à les sauvegarder régulièrement.</p><button class="btn full" style="margin-top:28px" onclick="step=1;render()">Commencer</button></div>`;
+ return`<div class="wel"><h1>Ma structure</h1><p class="sm">Ces informations pourront être modifiées dans les paramètres.</p>${profForm(draft)}<button class="btn full" style="margin-top:22px" onclick="toPin()">Continuer</button><button class="btn ghost full" style="margin-top:10px" onclick="restoreUI()">J’ai déjà une sauvegarde à restaurer</button></div>`}
+function profForm(p){return`<div style="display:flex;align-items:center;gap:14px;margin-top:14px"><div class="logo" id="lp" style="width:64px;height:64px">${p.logo?`<img src="${p.logo}">`:'Logo'}</div><label class="btn ghost" style="margin:0;display:inline-block">Choisir un logo<input type="file" accept="image/*" hidden onchange="pickLogo(this)"></label></div>
+ <label>Nom de la structure *</label><input id="p-n" value="${E(p.name)}"><label>Slogan</label><input id="p-s" value="${E(p.slogan)}"><label>Téléphone</label><input id="p-t" type="tel" value="${E(p.phone)}"><label>E-mail</label><input id="p-e" type="email" value="${E(p.email)}"><label>Adresse</label><input id="p-a" value="${E(p.address)}">`}
+function pickLogo(inp){const f=inp.files[0];if(!f)return;const im=new Image();im.onload=()=>{const k=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);const u=c.toDataURL('image/png');(S.profile||draft).logo=u;$('#lp').innerHTML=`<img src="${u}">`};im.src=URL.createObjectURL(f)}
+const readProf=()=>({logo:(S.profile||draft).logo||'',name:val('p-n'),slogan:val('p-s'),phone:val('p-t'),email:val('p-e'),address:val('p-a')});
+function toPin(){const p=readProf();if(!p.name){alert('Le nom de la structure est obligatoire.');return}draft=p;step=2;render()}
+const clean=v=>v.replace(/\D/g,'').slice(0,4);
+async function hp(pin,salt){const d=salt+':'+pin;if(crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(d));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}let h=5381;for(const c of d)h=((h<<5)+h+c.charCodeAt(0))|0;return'x'+h}
+async function mk(pin){const s=uid();return{s,h:await hp(pin,s)}}
+const pinIn=(id,l)=>`<label>${l}</label><input id="${id}" type="password" inputmode="numeric" maxlength="4" autocomplete="off" oninput="this.value=clean(this.value)">`;
+function pinStep(){return`<div class="wel"><h1>Protéger l’application</h1><p class="sm" style="font-size:15px">Créez un code à 4 chiffres. Il vous sera demandé à chaque ouverture. Il n’existe pas de « code oublié » : notez-le et pensez à sauvegarder vos données.</p>${pinIn('n1','Code à 4 chiffres')}${pinIn('n2','Confirmer le code')}<button class="btn full" style="margin-top:22px" onclick="launch(true)">Lancer l’application</button><button class="btn ghost full" style="margin-top:10px" onclick="launch(false)">Passer cette étape</button><button class="icon" style="margin-top:8px" onclick="step=1;render()">← Retour</button></div>`}
+async function launch(w){if(w){const a=val('n1');if(!/^\d{4}$/.test(a)){alert('Le code doit contenir exactement 4 chiffres.');return}if(a!==val('n2')){alert('Les deux codes ne correspondent pas.');return}S.pin=await mk(a)}S.profile=draft;locked=false;await save();navigator.storage?.persist?.();render()}
+function lockScreen(){const p=S.profile;return`<div class="wel" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center"><div class="logo" style="width:72px;height:72px;font-size:24px">${p.logo?`<img src="${p.logo}" alt="">`:E(initials(p.name))}</div><h1 style="font-size:21px">${E(p.name)}</h1><p class="sm">Entrez votre code</p><input id="lk" type="password" inputmode="numeric" maxlength="4" autocomplete="off" style="max-width:190px;text-align:center;font-size:28px;letter-spacing:12px;margin-top:14px" oninput="this.value=clean(this.value);if(this.value.length===4)unlock(this.value)"><p id="lm" style="color:var(--red);min-height:24px;margin-top:10px;font-size:14px"></p><button class="btn ghost" style="margin-top:20px" onclick="restoreUI()">Code oublié ? Restaurer une sauvegarde</button></div>`}
+async function unlock(v){const m=$('#lm'),i=$('#lk');if(Date.now()<until){i.value='';m.textContent='Trop d’essais. Patientez '+Math.ceil((until-Date.now())/1000)+' s.';return}
+ if(await hp(v,S.pin.s)===S.pin.h){tries=0;locked=false;render()}else{i.value='';if(++tries>=5){until=Date.now()+30000;tries=0;m.textContent='Trop d’essais. Patientez 30 s.'}else m.textContent='Code incorrect.'}}
+function pinSheet(m){sheet(`<h2>${{set:'Activer un code',change:'Modifier le code',off:'Désactiver le code'}[m]}</h2>${m!=='set'?pinIn('k0','Code actuel'):''}${m!=='off'?pinIn('k1','Nouveau code (4 chiffres)')+pinIn('k2','Confirmer le nouveau code'):''}<div class="acts"><button class="btn ghost" onclick="settings()">Annuler</button><button class="btn" onclick="pinSave('${m}')">Valider</button></div>`)}
+async function pinSave(m){if(m!=='set'&&await hp(val('k0'),S.pin.s)!==S.pin.h){alert('Le code actuel est incorrect.');return}
+ if(m==='off')S.pin=null;else{const a=val('k1');if(!/^\d{4}$/.test(a)){alert('Le code doit contenir exactement 4 chiffres.');return}if(a!==val('k2')){alert('Les deux codes ne correspondent pas.');return}S.pin=await mk(a)}
+ await save();settings()}
+// ---------- Paramètres & sauvegarde ----------
+function settings(){const p=S.profile;
+ sheet(`<h2>Paramètres</h2><h3 style="margin:14px 0 0;font-size:15px">Ma structure</h3>${profForm(p)}<button class="btn full" style="margin-top:14px" onclick="saveProf()">Enregistrer ma structure</button>
+ <h3 style="margin:26px 0 4px;font-size:15px">Apparence</h3><div class="sw">${Object.entries(THEMES).map(([k,c])=>`<button style="background:${c}" class="${(S.theme||'teal')===k?'on':''}" aria-label="${k}" onclick="setTheme('${k}')"></button>`).join('')}</div>
+ <h3 style="margin:26px 0 4px;font-size:15px">Installation</h3><p class="sm">${standalone()?'Application installée sur cet appareil.':'Installez l’appli pour l’ouvrir comme une application.'}</p><div class="acts" style="margin-top:10px">${standalone()?'':'<button class="btn" onclick="installApp()">Installer l’application</button>'}<button class="btn ghost" onclick="diag()">Diagnostic</button></div>
+ <h3 style="margin:26px 0 4px;font-size:15px">Code de verrouillage</h3><p class="sm">${S.pin?'Code activé.':'Aucun code défini.'}</p><div class="acts" style="margin-top:10px">${S.pin?'<button class="btn ghost" onclick="pinSheet(\'change\')">Modifier</button><button class="btn ghost" onclick="pinSheet(\'off\')">Désactiver</button>':'<button class="btn" onclick="pinSheet(\'set\')">Activer un code</button>'}</div>
+ <h3 style="margin:26px 0 4px;font-size:15px">Mes données</h3><p class="sm">${S.lastBackup?'Dernière sauvegarde : '+new Date(S.lastBackup).toLocaleString('fr-FR'):'Aucune sauvegarde pour le moment.'}</p>
+ <div class="acts" style="margin-top:10px"><button class="btn" onclick="backup()">Sauvegarder mes données</button><button class="btn ghost" onclick="restoreUI()">Restaurer</button></div>
+ <button class="btn ghost full" style="margin-top:10px" onclick="exportCSV()">Exporter les ventes (Excel / CSV)</button>
+ <button class="btn red full" style="margin-top:26px" onclick="resetAll()">Réinitialiser l’application</button><button class="btn ghost full" style="margin-top:10px" onclick="close()">Fermer</button>`)}
+async function saveProf(){const p=readProf();if(!p.name){alert('Le nom est obligatoire.');return}S.profile=p;await save();close();render()}
+async function setTheme(k){S.theme=k;await save();render();settings()}
+const dl=(blob,name)=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
+async function hget(){return kget('handle')}
+async function backup(){
+ try{S.lastBackup=Date.now();S.unsaved=0;const blob=new Blob([JSON.stringify({app:'baudson-gestion',version:1,data:S})],{type:'application/json'}),name=`sauvegarde-depenses_${iso(new Date())}.json`;
+  if(window.showSaveFilePicker){let h=await hget();
+   if(h){const o={mode:'readwrite'};if(await h.queryPermission(o)!=='granted'&&await h.requestPermission(o)!=='granted')h=null}
+   if(!h){h=await showSaveFilePicker({suggestedName:'baudson-gestion.json',types:[{description:'Sauvegarde',accept:{'application/json':['.json']}}]});await kput('handle',h)}
+   const w=await h.createWritable();await w.write(blob);await w.close();alert('Sauvegarde enregistrée (l’ancienne a été remplacée).')}
+  else{const f=new File([blob],name,{type:'application/json'});
+   if(navigator.canShare?.({files:[f]}))await navigator.share({files:[f],title:name});else{dl(blob,name);alert('Sauvegarde téléchargée : '+name)}}
+  await save();settings()}
+ catch(e){if(e.name!=='AbortError'){S.lastBackup=null;alert('La sauvegarde a échoué : '+e.message)}else S.lastBackup=null}}
+function restoreUI(){const i=document.createElement('input');i.type='file';i.accept='.json,application/json';i.onchange=async()=>{
+ try{const j=JSON.parse(await i.files[0].text());if(j.app!=='baudson-gestion'||!j.data?.articles||!j.data?.ventes)throw 0;
+  if(!confirm('Cette action remplace toutes les données actuelles. Continuer ?'))return;
+  await kput('safety',S);S=j.data;await save();close();step=1;locked=false;render()}catch{alert('Ce fichier n’est pas une sauvegarde valide.')}};i.click()}
+function exportCSV(){const esc=v=>'"'+String(v).replace(/"/g,'""')+'"',rows=[[S.profile.name],[],['N°','Date','Client','Statut','Total','Payé','Reste'],...S.ventes.filter(v=>v.statut!=='brouillon').map(v=>[v.num,v.date,cn(v),VST[v.statut][0],vt(v),paid('v',v.id),rv(v)])];
+ dl(new Blob(['\ufeff'+rows.map(r=>r.map(esc).join(';')).join('\r\n')],{type:'text/csv'}),`ventes_${iso(new Date())}.csv`)}
+async function resetAll(){if(!confirm('Effacer TOUTES les données de cette application ?')||!confirm('Dernière confirmation : cette action est irréversible.'))return;
+ await kput('safety',S);S=blank();step=0;draft={};locked=false;await save();close();render()}
+// ---------- Installation ----------
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;if(S&&S.profile&&!locked&&!$('#ov'))render()});
+addEventListener('appinstalled',()=>{dip=null;if(S&&S.profile)render()});
+const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const installBar=()=>dip&&!standalone()&&!dipHide?'<div class="warn" style="display:flex;gap:10px;align-items:center"><span style="flex:1">Installez l’application sur votre appareil.</span><button class="btn" style="min-height:40px;padding:8px 14px" onclick="installApp()">Installer</button><button class="icon" onclick="dipHide=true;render()" aria-label="Fermer">✕</button></div>':'';
+async function installApp(){if(!dip){diag();return}dip.prompt();await dip.userChoice;dip=null;close();render()}
+async function diag(){const ok=(b,t,d='')=>`<div class="row"><span style="font-size:18px;color:${b?'var(--ok)':'var(--red)'}">${b?'✔':'✖'}</span><div class="g"><b>${t}</b>${d?`<span class="tag" style="white-space:normal">${d}</span>`:''}</div></div>`;
+ let h=ok(isSecureContext,'Connexion sécurisée (https)',isSecureContext?'':'L’installation exige une adresse en https.'),m=null;
+ try{const r=await fetch('manifest.json',{cache:'no-store'});if(r.ok)m=await r.json();else h+=ok(false,'Fichier manifest.json','Introuvable (erreur '+r.status+') : il n’a pas été envoyé sur l’hébergeur.')}catch{h+=ok(false,'Fichier manifest.json','Introuvable ou illisible.')}
+ if(m)h+=ok(true,'Fichier manifest.json','Nom : '+E(m.name));
+ for(const f of['icon-192.png','icon-512.png']){let g=false;try{g=(await fetch(f,{cache:'no-store'})).ok}catch{}h+=ok(g,'Icône '+f,g?'':'Fichier manquant sur l’hébergeur.')}
+ let sw=false;try{sw=!!(await navigator.serviceWorker.getRegistration())}catch{}
+ h+=ok(sw,'Mode hors ligne (sw.js)',sw?'':'Non actif : fichier sw.js absent, ou rechargez la page.');
+ h+=ok(standalone()||!!dip,'Installation',standalone()?'Déjà installée sur cet appareil.':dip?'Prête : appuyez sur « Installer l’application ».':'Pas encore proposée. Si tout est vert, rechargez la page, patientez quelques secondes, puis utilisez le menu du navigateur.');
+ sheet(`<h2>Diagnostic d’installation</h2>${h}<div class="acts"><button class="btn ghost" onclick="settings()">Retour</button></div>`)}
+// ---------- Démarrage ----------
+let hid=0;document.addEventListener('visibilitychange',()=>{if(document.hidden)hid=Date.now();else if(S?.pin&&S.profile&&hid&&Date.now()-hid>60000){locked=true;render()}});
+(async()=>{db=await idb();S=await kget('data')||blank();locked=!!S.pin;render();
+ if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})})();
+</script></body></html>
